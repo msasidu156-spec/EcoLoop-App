@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EcoLoop - Welcome</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100vh;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-area {
+            margin-bottom: 20px;
+        }
+        .logo-icon {
+            font-size: 70px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .logo-text {
+            font-size: 36px;
+            font-weight: 800;
+            color: #10b981;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        .tagline {
+            font-size: 18px;
+            color: #94a3b8;
+            max-width: 280px;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+        .footer-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .btn-start {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-start:active {
+            transform: scale(0.98);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="logo-area">
+            <div class="logo-icon">♻️</div>
+            <div class="logo-text">EcoLoop</div>
+        </div>
+        <p class="tagline">පරිසරය සුරකිමින්, කුණු සහ පරණ බඩු විකුණා මුදල් උපයන්න.</p>
+    </div>
+
+    <div class="footer-area">
+        <button class="btn-start" onclick="nextScreen()">Get Started</button>
+    </div>
+
+    <script>
+        function nextScreen() {
+            // ඊළඟ ස්ක්‍රීන් එකට (Dashboard එකට) යන්න පස්සේ කෝඩ් කරමු
+            alert('EcoLoop එකට සාදරයෙන් පිළිගනිමු! අපි ඊළඟට AI කැමරා ස්ක්‍රීන් එක හදමු.');
+        }
+    </script>
+
+</body>
+</html>
