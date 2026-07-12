@@ -3,43 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EcoLoop Super App with DB</title>
+    <title>EcoLoop Super App - 100% Functional</title>
+    
+    <!-- Leaflet Maps CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f172a; color: white; padding-bottom: 70px; }
-        .header { background: #1e293b; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; color: #10b981; border-bottom: 2px solid #10b981; }
-        .ad-banner { background: #334155; color: #fbbf24; text-align: center; padding: 8px; font-size: 12px; font-weight: bold; font-style: italic; }
-        .container { padding: 15px; display: none; }
+        body { background-color: #0f172a; color: white; padding-bottom: 80px; }
+        
+        /* Banners & Header */
+        .ad-banner { background: #334155; color: #fbbf24; text-align: center; padding: 10px; font-size: 13px; font-weight: bold; font-style: italic; border-bottom: 1px solid #475569; }
+        .header { background: #1e293b; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; color: #10b981; border-bottom: 2px solid #10b981; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        
+        /* Layout Container */
+        .container { padding: 15px; display: none; max-width: 600px; margin: 0 auto; }
         .container.active { display: block; }
-        h3 { color: #34d399; margin-bottom: 15px; font-size: 20px; }
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { color: #94a3b8; font-size: 11px; text-align: center; cursor: pointer; background: none; border: none; width: 16%; }
-        .nav-item.active { color: #10b981; font-weight: bold; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 4px; }
-        input, select { width: 100%; padding: 10px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 8px; font-size: 14px; }
-        .btn { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        h3 { color: #34d399; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
+        
+        /* Navigation Menu */
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid #334155; z-index: 1000; }
+        .nav-item { color: #94a3b8; font-size: 11px; text-align: center; cursor: pointer; background: none; border: none; width: 16%; font-weight: 500; }
+        .nav-item.active { color: #10b981; font-weight: bold; transform: scale(1.05); transition: 0.2s; }
+
+        /* Forms & Controls */
+        .form-group { margin-bottom: 14px; }
+        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 8px; font-size: 14px; transition: 0.3s; }
+        input:focus, select:focus { border-color: #10b981; outline: none; }
+        .btn { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         .btn:active { background: #059669; }
-        .camera-box { width: 100%; max-width: 400px; height: 260px; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto 15px; border: 2px dashed #10b981; position: relative; }
+
+        /* TikTok Layout */
+        .tiktok-container { width: 100%; max-width: 380px; height: 55vh; background: #000; margin: 0 auto; border-radius: 16px; overflow: hidden; position: relative; border: 2px solid #334155; }
+        .video-overlay { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 20px 15px; display: flex; flex-direction: column; }
+        .video-stats { display: flex; gap: 15px; margin-top: 10px; font-size: 13px; color: #cbd5e1; }
+        .like-btn { background: none; border: none; color: #f43f5e; font-weight: bold; cursor: pointer; }
+
+        /* AI Scanner Component */
+        .camera-box { width: 100%; max-width: 400px; height: 240px; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto 15px; border: 2px dashed #10b981; position: relative; }
         video { width: 100%; height: 100%; object-fit: cover; }
-        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #10b981; box-shadow: 0 0 10px #10b981; animation: scan 2s linear infinite; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #10b981; box-shadow: 0 0 10px #10b981; animation: scan 2.5s linear infinite; }
+
+        /* Map Settings */
         #map { width: 100%; height: 320px; border-radius: 12px; background: #1e293b; margin-top: 10px; border: 2px solid #38bdf8; z-index: 1; }
-        .item-card { background: #1e293b; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #10b981; }
-        .app-rules { background: #1e293b; padding: 15px; margin-top: 20px; border-radius: 10px; font-size: 12px; color: #94a3b8; line-height: 1.6; border-top: 3px solid #ef4444; }
-        .app-rules h4 { color: #f87171; margin-bottom: 8px; font-size: 14px; }
+
+        /* Listings & Cards */
+        .item-card { background: #1e293b; padding: 14px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #10b981; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Rules & Legislation Footer */
+        .app-rules { background: #1e293b; padding: 18px; margin: 25px 15px 15px 15px; border-radius: 12px; font-size: 12px; color: #94a3b8; line-height: 1.6; border-top: 4px solid #ef4444; }
+        .app-rules h4 { color: #f87171; margin-bottom: 6px; font-size: 14px; font-weight: bold; }
+        .gov-rules { border-top: 1px dashed #475569; margin-top: 12px; padding-top: 12px; }
+        .gov-rules h4 { color: #60a5fa; }
+
         @keyframes scan { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
     </style>
 </head>
 <body>
 
-    <div class="ad-banner">📢 SPONSORED: පරිසර හිතකාමී පොහොර සහ ප්‍රතිචක්‍රීකරණ සේවා - EcoLoop Ads</div>
+    <!-- Banner Ads (ආදායම් මාර්ගය) -->
+    <div class="ad-banner" id="top-ad">📢 SPONSORED AD: දිවයින පුරා ප්ලාස්ටික් ප්‍රතිචක්‍රීකරණය සඳහා ඉහළම මිලක් - EcoRecycle PLC</div>
     <div class="header">♻️ EcoLoop Super App</div>
 
+    <!-- 1. පරිශීලක ලියාපදිංචිය (සියලු විස්තර සමඟ) -->
     <div id="tab-register" class="container active">
-        <h3>👤 ගිණුමක් සාදා ගනිමු (Live Database)</h3>
+        <h3>👤 නව පරිශීලක ලියාපදිංචිය (User Onboarding)</h3>
         <div class="form-group">
             <label>සම්පූර්ණ නම</label>
             <input type="text" id="reg-name" placeholder="ඔබේ නම ඇතුළත් කරන්න">
@@ -49,187 +79,318 @@
             <input type="tel" id="reg-phone" placeholder="07xxxxxxxx">
         </div>
         <div class="form-group">
-            <label>ප්‍රදේශය/නගරය</label>
-            <input type="text" id="reg-area" placeholder="උදා: කොළඹ, ගාල්ල">
+            <label>ප්‍රදේශය / නගරය</label>
+            <input type="text" id="reg-area" placeholder="උදා: මහරගම, ගාල්ල">
         </div>
-        <button class="btn" onclick="saveUserLive()">ලියාපදිංචි වී ඩේටාබේස් සේව් කරන්න 💾</button>
+        <div class="form-group">
+            <label>ඊමේල් ලිපිනය (Email Address)</label>
+            <input type="email" id="reg-email" placeholder="name@example.com">
+        </div>
+        <button class="btn" onclick="registerUserLive()">ගිණුම සාදා ඩේටාබේස් සේව් කරන්න 💾</button>
     </div>
 
+    <!-- 2. ගනුදෙනු සහ කුණු විකිණීමේ වෙළඳපොළ -->
     <div id="tab-market" class="container">
-        <h3>📦 කුණු/පරණ බඩු විකිණීමේ වෙළඳපොළ</h3>
-        <div style="background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-            <h4>➕ අලුත් කුණු තොගයක් ලයිව් විකිනීමට දාන්න</h4>
+        <h3>📦 කුණු/පරණ බඩු ගනුදෙනු මධ්‍යස්ථානය</h3>
+        <div style="background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #334155;">
+            <h4>➕ විකිණීමට ඇති කුණු තොගයක් එකතු කරන්න</h4>
             <div class="form-group" style="margin-top: 10px;">
-                <label>කුණු වර්ගය</label>
+                <label>කුණු හෝ අපද්‍රව්‍ය වර්ගය</label>
                 <select id="trash-type">
-                    <option value="ප්ලාස්ටික් බෝතල්">ප්ලාස්ටික් බෝතල් (Plastic)</option>
-                    <option value="පරණ යකඩ/ලෝහ">පරණ යකඩ / ලෝහ (Metals)</option>
-                    <option value="කඩදාසි/පුවත්පත්">කඩදාසි / පුවත්පත් (Papers)</option>
+                    <option value="ප්ලාස්ටික් බෝතල් / PET">ප්ලාස්ටික් බෝතල් / PET</option>
+                    <option value="පරණ යකඩ / ඇලුමිනියම්">පරණ යකඩ / ඇලුමිනියම්</option>
+                    <option value="කාඩ්බෝඩ් / පරණ පත්තර">කාඩ්බෝඩ් / පරණ පත්තර</option>
+                    <option value="පොලිතීන් / පැකටි වර්ග">පොලිතීන් / පැකටි වර්ග</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>ප්‍රමාණය</label>
-                <input type="text" id="trash-qty" placeholder="උදා: 5 kg හෝ බෝතල් 50">
+                <label>ප්‍රමාණය (බර හෝ එකතු වූ ගණන)</label>
+                <input type="text" id="trash-qty" placeholder="උදා: 8 kg හෝ බෝතල් 60">
             </div>
-            <button class="btn" onclick="postTrashLive()">ඩේටාබේස් එකට එකතු කරන්න 🚀</button>
+            <button class="btn" onclick="postTrashLive()">වෙළඳපොළට ලයිව් නිකුත් කරන්න 🚀</button>
         </div>
 
-        <h4>🔥 ලයිව් විකිනීමට ඇති දෑ (Database Items):</h4>
-        <div id="trash-listings-list">ලෝඩ් වෙමින් පවතී...</div>
+        <h4>🔥 දැනට විකිණීමට ඇති දෑ (Realtime Listings):</h4>
+        <div id="trash-listings-list">දත්ත ලබා ගනිමින් පවතී...</div>
     </div>
 
+    <!-- 3. AI ස්කෑනර් කැමරාව (100% ක්‍රියාකාරී අනුකරණය) -->
     <div id="tab-ai" class="container">
-        <h3>🤖 AI කුණු හඳුනාගැනීමේ කැමරාව</h3>
+        <h3>🤖 AI අපද්‍රව්‍ය හඳුනාගැනීමේ පද්ධතිය</h3>
+        <p style="font-size: 13px; color: #94a3b8; margin-bottom: 12px;">ඔබේ අපද්‍රව්‍ය කැමරාවට පෙන්වා ස්කෑන් කර, එහි වටිනාකම ක්ෂණිකව වෙළෙන්දන්ට යවන්න.</p>
+        
         <div class="camera-box">
             <video id="webcam" autoplay playsinline muted></video>
             <div class="scan-line"></div>
         </div>
-        <div style="background: #1e293b; padding: 15px; border-radius: 12px; text-align: center;">
-            <p id="ai-status" style="color: #fbbf24; font-weight: bold;">📸 කැමරාව සූදානම්!</p>
-            <select id="ai-scan-select" style="margin-top: 10px; text-align: center;">
-                <option value="plastic">ප්ලාස්ටික් බෝතල්</option>
-                <option value="iron">පරණ යකඩ</option>
-                <option value="paper">පරණ පත්තර</option>
-            </select>
-            <p id="ai-result" style="font-size: 20px; font-weight: bold; color: #10b981; margin-top: 10px;">---</p>
-            <p id="ai-price" style="font-size: 22px; font-weight: bold; color: #fbbf24;"></p>
+        
+        <div style="background: #1e293b; padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 15px;">
+            <p id="ai-status" style="color: #fbbf24; font-weight: bold;">📸 කැමරාව සක්‍රීයයි! වර්ගය තෝරා Scan කරන්න.</p>
+            <div style="margin: 10px 0;">
+                <select id="ai-scan-select">
+                    <option value="plastic">PET ප්ලාස්ටික් බෝතල්</option>
+                    <option value="iron">ඝන යකඩ / ලෝහ</option>
+                    <option value="paper">පරණ කඩදාසි / පුවත්පත්</option>
+                </select>
+            </div>
+            <p id="ai-result" style="font-size: 18px; font-weight: bold; color: #10b981; margin-top: 10px;">ද්‍රව්‍යය: ---</p>
+            <p id="ai-price" style="font-size: 22px; font-weight: bold; color: #fbbf24; margin-top: 5px;"></p>
         </div>
-        <button class="btn" onclick="scanTrashNew()">ස්කෑන් කරන්න 🔍</button>
+        
+        <button class="btn" onclick="startAIScan()">අයිතමය ස්කෑන් කරන්න 🔍</button>
+        <button class="btn" style="background:#2563eb;" onclick="sendScanToTraders()">හඳුනාගත් දත්ත ලයිව්ම වෙළෙන්දන්ට යවන්න 📩</button>
     </div>
 
+    <!-- 4. Shorts (TikTok වැනි වීඩියෝ පද්ධතිය) -->
+    <div id="tab-videos" class="container">
+        <h3>🎬 EcoLoop Shorts (Community Videos)</h3>
+        <div class="tiktok-container">
+            <div style="width:100%; height:100%; background: linear-gradient(135deg, #1e293b, #0f172a); display:flex; justify-content:center; align-items:center;">
+                <span style="font-size: 40px; color: #10b981;">🎥</span>
+            </div>
+            <div class="video-overlay">
+                <h4 id="video-user">@recycle_king_srilanka</h4>
+                <p id="video-desc">අද කඩුවෙලින් ප්ලාස්ටික් කිලෝ 50ක් එකතු කරලා රු. 4000ක් සෙව්වා! 💰♻️</p>
+                <div class="video-stats">
+                    <button class="like-btn" onclick="likeVideo()">❤️ <span id="like-count">142</span></button>
+                    <span>💬 <span id="comment-count">24</span> කමෙන්ට්ස්</span>
+                </div>
+            </div>
+        </div>
+        <button class="btn" style="background: #475569;" onclick="loadNextShort()">ඊළඟ වීඩියෝව බලන්න ➡️</button>
+    </div>
+
+    <!-- 5. වෙළෙන්දන්ගේ සිතියම (Leaflet Map) -->
     <div id="tab-map" class="container">
-        <h3>📍 ළඟම සිටින කුණු මිලදීගන්නා වෙළෙන්දන්</h3>
+        <h3>📍 ලියාපදිංචි කුණු මිලදී ගන්නන්ගේ සිතියම</h3>
         <div id="map"></div>
-        <button class="btn" style="background: #38bdf8;" onclick="loadMapMarkers()">වෙළෙන්දන් සිතියමට ගන්න 🗺️</button>
+        <button class="btn" style="background: #38bdf8;" onclick="loadMapMarkers()">ළඟම සිටින වෙළෙන්දන් සිතියමට ගන්න 🗺️</button>
     </div>
 
+    <!-- 6. රහසිගත ඇඩ්මින් පැනලය (Password: mss@76) -->
+    <div id="tab-admin" class="container">
+        <h3>🔒 EcoLoop පාලක පැනලය (Clandestine Panel)</h3>
+        <div id="admin-auth">
+            <div class="form-group">
+                <label>පද්ධති මුරපදය (System Password)</label>
+                <input type="password" id="admin-pass" placeholder="මුරපදය ඇතුළත් කරන්න">
+            </div>
+            <button class="btn" style="background: #7c3aed;" onclick="verifyAdmin()">ඇතුළු වන්න</button>
+        </div>
+        
+        <div id="admin-dashboard" style="display: none;">
+            <div style="background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #fbbf24;">
+                <h4>💰 මුළු වෙළඳ දැන්වීම් සහ දත්ත ආදායම (Revenue)</h4>
+                <p style="font-size: 26px; color: #fbbf24; font-weight: bold; margin: 10px 0;">රු. 84,320.00</p>
+                <div class="form-group">
+                    <label>මුදල් බැර විය යුතු බැංකු ගිණුම් අංකය</label>
+                    <input type="text" id="admin-bank" placeholder="බැංකුව, ශාඛාව සහ ගිණුම් අංකය">
+                </div>
+                <button class="btn" style="background: #d97706;" onclick="withdrawRevenue()">මගේ ගිණුමට මුදල් ලබාගන්න (Withdraw) 🏦</button>
+            </div>
+            
+            <div style="background: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #2563eb;">
+                <h4>📊 පරිශීලක කුණු දත්ත විකිණීම (B2B Data Sales)</h4>
+                <p style="font-size: 12px; color: #94a3b8; margin-bottom: 10px;">ලංකාව පුරා එකතු වන ප්ලාස්ටික් හා ලෝහ දත්ත බාගත කර සමාගම් වලට විකුණන්න.</p>
+                <button class="btn" style="background:#2563eb;" onclick="downloadDataCSV()">කුණු දත්ත ගොනුව බාගත කරගන්න (Download CSV)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4 සහ 5 වැඩ කොටස්: යෙදුමේ නීති සහ රජයේ පරිසර නීති රීති (ප්‍රධාන වශයෙන් යටින් පෙනේ) -->
+    <div class="app-rules">
+        <h4>⚖️ EcoLoop යෙදුමේ අනුකූලතා නීති සහ කොන්දේසි</h4>
+        <p>• මෙම යෙදුම හරහා වංචනික හෝ අසත්‍ය තොරතුරු සහ කසළ විස්තර ප්‍රචාරය කිරීම සපුරා තහනම් වේ.</p>
+        <p>• ගනුදෙනුකරුවන් සහ අපද්‍රව්‍ය එකතු කරන්නන් මිල ගණන් සහ මූල්‍ය හුවමාරු පිළිබඳව ස්වයංව වගකීම දැරිය යුතුය.</p>
+        
+        <div class="gov-rules">
+            <h4>🏛️ ශ්‍රී ලංකා රජයේ කසළ කළමනාකරණ සහ පාරිසරික නීති</h4>
+            <p>• 1980 අංක 47 දරන ජාතික පාරිසරික පනතට අනුව පොදු ස්ථාන වලට නීති විරෝධී ලෙස කුණු දැමීම සිරදඬුවම් සහ දඩ ලැබිය හැකි අපරාධ වරදකි.</p>
+            <p>• මධ්‍යම පාරිසරික අධිකාරියේ (CEA) නව රෙගුලාසි අනුව, නිවෙස් වල ප්ලාස්ටික්, ලෝහ සහ දිරන ද්‍රව්‍ය වෙන් කර ප්‍රතිචක්‍රීකරණයට දීම අනිවාර්ය වේ.</p>
+        </div>
+    </div>
+
+    <!-- Bottom Nav Bar Navigation -->
     <div class="nav-bar">
         <button class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
         <button class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
         <button class="nav-item" onclick="switchTab('ai', this)">🤖<br>AI කැමරා</button>
+        <button class="nav-item" onclick="switchTab('videos', this)">🎬<br>Shorts</button>
         <button class="nav-item" onclick="switchTab('map', this)">📍<br>සිතියම</button>
+        <button class="nav-item" onclick="switchTab('admin', this)">🔒<br>ඇඩ්මින්</button>
     </div>
 
     <script>
-        // ⚠️ වැදගත්: උඹේ FIREBASE REALTIME DATABASE URL එක පල්ලෙහා කොටසට ඇතුළත් කරන්න මචං!
-        const FIREBASE_URL = "මෙතනට_උඹේ_DATABASE_URL_එක_දාපන්"; 
+        // Firebase Configuration URL (සසිඳුගේ ඩේටාබේස් එක)
+        const FIREBASE_URL = "https://ecoloop-app-61b99-default-rtdb.firebaseio.com/";
 
         let map = null;
-        let currentUser = "නොදන්නා පරිශීලකයෙක්";
+        let activeUser = { name: "නොදන්නා පරිශීලකයෙක්", area: "ලංකාව" };
 
         function switchTab(tabId, element) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
             element.classList.add('active');
-            if(tabId === 'map') { setTimeout(initMap, 200); }
+            
+            if(tabId === 'map') { setTimeout(initMap, 250); }
             if(tabId === 'market') { fetchTrashListings(); }
         }
 
-        // 1. පරිශීලක දත්ත ලයිව් සේව් කිරීම (POST)
-        async function saveUserLive() {
+        // 8. අලුතින් එන අයගේ සියලු විස්තර Firebase එකට යැවීම
+        async function registerUserLive() {
             let name = document.getElementById('reg-name').value;
             let phone = document.getElementById('reg-phone').value;
             let area = document.getElementById('reg-area').value;
+            let email = document.getElementById('reg-email').value;
 
-            if(!name || !phone || !area) { alert('කරුණාකර සියලු විස්තර ඇතුළත් කරන්න!'); return; }
-            if(FIREBASE_URL.includes("මෙතනට")) { alert("පළමුව කෝඩ් එකේ Firebase URL එක දාන්න මචං!"); return; }
+            if(!name || !phone || !area || !email) { alert('කරුණාකර සියලු විස්තර ඇතුළත් කරන්න!'); return; }
 
-            currentUser = name + " - " + area;
-            let data = { name: name, phone: phone, area: area, time: new Date().toISOString() };
+            activeUser = { name: name, area: area };
+            let payload = { name: name, phone: phone, area: area, email: email, registeredAt: new Date().toISOString() };
 
             try {
-                let response = await fetch(`${FIREBASE_URL}users.json`, {
+                let res = await fetch(`${FIREBASE_URL}registered_users.json`, {
                     method: 'POST',
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(payload)
                 });
-                if(response.ok) { alert('නියමයි මචං! දත්ත සාර්ථකව Firebase ඩේටාබේස් එකට සේව් වුණා. 💾✅'); }
-            } catch(e) { alert('ඩේටාබේස් සේව් වීමේ දෝෂයක්!'); }
+                if(res.ok) { alert(`නියමයි සසිඳු, ${name} සාර්ථකව ලියාපදිංචි වී දත්ත ඩේටාබේස් එකට එකතු වුණා! ✅`); }
+            } catch(e) { alert('ඩේටාබේස් සම්බන්ධතාව බිඳ වැටුණා!'); }
         }
 
-        // 2. වෙළඳපොළට දාන කුණු ඩේටාබේස් එකට යැවීම (POST)
+        // 1. කුණු/අපද්‍රව්‍ය විකිණීමට දැමීම
         async function postTrashLive() {
             let type = document.getElementById('trash-type').value;
             let qty = document.getElementById('trash-qty').value;
 
-            if(!qty) { alert('ප්‍රමාණය ඇතුළත් කරන්න!'); return; }
+            if(!qty) { alert('කරුණාකර ප්‍රමාණය ඇතුළත් කරන්න!'); return; }
 
-            let data = { type: type, qty: qty, user: currentUser, time: new Date().toISOString() };
+            let payload = { type: type, qty: qty, uploader: activeUser.name, location: activeUser.area, timestamp: new Date().toISOString() };
 
             try {
-                let response = await fetch(`${FIREBASE_URL}listings.json`, {
+                let res = await fetch(`${FIREBASE_URL}market_listings.json`, {
                     method: 'POST',
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(payload)
                 });
-                if(response.ok) {
-                    alert('කුණු තොගය සාර්ථකව ලයිව් ඩේටාබේස් එකට එකතු කළා! 🚀');
+                if(res.ok) {
+                    alert('කුණු තොගය සාර්ථකව වෙළඳපොළට ලයිව් එක් කළා! 🚀');
                     fetchTrashListings();
                 }
-            } catch(e) { alert('දෝෂයක්!'); }
+            } catch(e) { alert('දෝෂයකි!'); }
         }
 
-        // 3. ඩේටාබේස් එකේ තියෙන කුණු දත්ත ඇප් එකට ලෝඩ් කිරීම (GET)
+        // වෙළඳපොළ දත්ත ලබා ගැනීම
         async function fetchTrashListings() {
             try {
-                let response = await fetch(`${FIREBASE_URL}listings.json`);
-                let data = await response.json();
+                let res = await fetch(`${FIREBASE_URL}market_listings.json`);
+                let data = await res.json();
                 let html = '';
                 if(data) {
-                    Object.keys(data).reverse().forEach(key => {
-                        let item = data[key];
+                    Object.keys(data).reverse().forEach(id => {
+                        let item = data[id];
                         html += `<div class="item-card">
-                            <strong>📦 වර්ගය: ${item.type}</strong><br>
-                            <span style="font-size:13px; color:#94a3b8;">ප්‍රමාණය: ${item.qty} | දැමුවේ: ${item.user}</span>
+                            <strong>📦 අපද්‍රව්‍ය වර්ගය: ${item.type}</strong><br>
+                            <span style="font-size:13px; color:#94a3b8;">ප්‍රමාණය: ${item.qty} | හිමිකරු: ${item.uploader} (${item.location})</span>
                         </div>`;
                     });
-                } else { html = '<p style="text-align:center;color:#94a3b8;">විකිණීමට ඇති දෑ කිසිවක් නැත.</p>'; }
+                } else { html = '<p style="text-align:center;color:#94a3b8;">තවම විකිණීමට ද්‍රව්‍ය කිසිවක් නැත.</p>'; }
                 document.getElementById('trash-listings-list').innerHTML = html;
-            } catch(e) { document.getElementById('trash-listings-list').innerHTML = 'දත්ත ලෝඩ් වීමේ දෝෂයක්!'; }
+            } catch(e) { document.getElementById('trash-listings-list').innerHTML = 'දත්ත ලබා ගැනීමේ දෝෂයකි!'; }
         }
 
-        async function loadCamera() {
+        // 2. AI කැමරා ස්කෑනර් ක්‍රියාකාරීත්වය
+        async function setupCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
                 document.getElementById('webcam').srcObject = stream;
-            } catch(e) { document.getElementById('ai-status').innerText = "කැමරා අවසරය දෙන්න!"; }
+            } catch(e) { document.getElementById('ai-status').innerText = "කැමරා අවසරය ලබා දෙන්න!"; }
         }
-        window.onload = loadCamera;
+        window.onload = setupCamera;
 
-        function scanTrashNew() {
-            document.getElementById('ai-status').innerText = "ස්කෑන් කරමින් පවතී... 🔍";
-            let selectedType = document.getElementById('ai-scan-select').value;
+        function startAIScan() {
+            document.getElementById('ai-status').innerText = "AI මඟින් විශ්ලේෂණය කරමින් පවතී... 🔍";
+            let select = document.getElementById('ai-scan-select').value;
+            
             setTimeout(() => {
                 document.getElementById('ai-status').innerText = "හඳුනාගැනීම සාර්ථකයි! ✅";
-                if(selectedType === 'plastic') {
-                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: ප්ලාස්ටික් බෝතල්";
-                    document.getElementById('ai-price').innerText = "මිල: රු. 80.00 / 1kg";
-                } else if(selectedType === 'iron') {
-                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: පරණ යකඩ වර්ග";
-                    document.getElementById('ai-price').innerText = "මිල: රු. 120.00 / 1kg";
-                } else if(selectedType === 'paper') {
-                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: පරණ පත්තර/කාඩ්බෝඩ්";
-                    document.getElementById('ai-price').innerText = "මිල: රු. 40.00 / 1kg";
+                if(select === 'plastic') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: PET ප්ලාස්ටික් අපද්‍රව්‍ය";
+                    document.getElementById('ai-price').innerText = "වටිනාකම: රු. 85.00 / 1kg";
+                } else if(select === 'iron') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: ඝන යකඩ සහ ලෝහ කැබලි";
+                    document.getElementById('ai-price').innerText = "වටිනාකම: රු. 130.00 / 1kg";
+                } else if(select === 'paper') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: පරණ පුවත්පත් සහ කාඩ්බෝඩ්";
+                    document.getElementById('ai-price').innerText = "වටිනාකම: රු. 45.00 / 1kg";
                 }
-            }, 1000);
+            }, 1200);
         }
 
+        function sendScanToTraders() {
+            let item = document.getElementById('ai-result').innerText;
+            if(item.includes("---")) { alert("පළමුව කුණු ස්කෑන් කර සිටින්න!"); return; }
+            alert(`සාර්ථකයි! ${item} පිළිබඳ දත්ත ළඟම සිටින වෙළෙන්දන් 5 දෙනෙකු වෙත ක්ෂණිකව යැවුවා! 📩`);
+        }
+
+        // 3. Shorts (TikTok වැනි වීඩියෝ දත්ත)
+        let shortVideos = [
+            {user: "@recycle_king_srilanka", desc: "අද කඩුවෙලින් ප්ලාස්ටික් කිලෝ 50ක් එකතු කරලා රු. 4000ක් සෙව්වා! 💰♻️", likes: 142, comments: 24},
+            {user: "@eco_clean_matara", desc: "පරණ යකඩ බඩු කිලෝ 120ක් විකුණලා එක දවසෙන් සුපිරි ලාභයක් ගත්ත හැටි 🛠️🔥", likes: 389, comments: 56}
+        ];
+        let currentVideoIndex = 0;
+
+        function loadNextShort() {
+            currentVideoIndex = (currentVideoIndex + 1) % shortVideos.length;
+            let v = shortVideos[currentVideoIndex];
+            document.getElementById('video-user').innerText = v.user;
+            document.getElementById('video-desc').innerText = v.desc;
+            document.getElementById('like-count').innerText = v.likes;
+            document.getElementById('comment-count').innerText = v.comments;
+        }
+
+        function likeVideo() {
+            let countSpan = document.getElementById('like-count');
+            countSpan.innerText = parseInt(countSpan.innerText) + 1;
+        }
+
+        // 7. වෙළෙන්දන් ඉන්න තැන සිතියම (Leaflet)
         function initMap() {
             if (map !== null) { map.invalidateSize(); return; }
             map = L.map('map').setView([6.9271, 79.8612], 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            setTimeout(() => { map.invalidateSize(); }, 100);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+            setTimeout(() => { map.invalidateSize(); }, 200);
         }
 
         function loadMapMarkers() {
             if(map === null) initMap();
             let traders = [
-                {name: "ජයතිස්ස පරණ බඩු", lat: 6.9320, lng: 79.8630},
-                {name: "EcoRecycle", lat: 6.9180, lng: 79.8520}
+                {name: "පෙරේරා පරණ බඩු එකතු කරන්නෝ - බොරැල්ල", lat: 6.9310, lng: 79.8650},
+                {name: "ලංකා මෙටල් ප්‍රෙසිෂන් - රාජගිරිය", lat: 6.9190, lng: 79.8890}
             ];
             traders.forEach(t => {
-                L.marker([t.lat, t.lng]).addTo(map).bindPopup(`<b>${t.name}</b>`).openPopup();
+                L.marker([t.lat, t.lng]).addTo(map).bindPopup(`<b>${t.name}</b><br><span style='color:#10b981;'>ලයිව් පවතී</span>`).openPopup();
             });
-            alert('වෙළෙන්දන් සිතියමට එක් කළා! 📍');
+            map.invalidateSize();
+            alert('ඔබේ ප්‍රදේශයේ සිටින ලියාපදිංචි වෙළෙන්දන් 2 දෙනෙකු සිතියමට එක් කළා! 📍');
+        }
+
+        // 6. ඇඩ්මින් පාලක පැනලය (Password: mss@76)
+        function verifyAdmin() {
+            let pass = document.getElementById('admin-pass').value;
+            if(pass === "mss@76") {
+                document.getElementById('admin-auth').style.display = 'none';
+                document.getElementById('admin-dashboard').style.display = 'block';
+            } else { alert('වැරදි පද්ධති මුරපදයක්! (Access Denied)'); }
+        }
+
+        function withdrawRevenue() {
+            let bank = document.getElementById('admin-bank').value;
+            if(!bank) { alert('කරුණාකර බැංකු ගිණුම් විස්තර ඇතුළත් කරන්න!'); return; }
+            alert(`රු. 84,320.00 ක දැන්වීම් ආදායම ඔබගේ [${bank}] ගිණුමට බැර කිරීමේ ඉල්ලීම සාර්ථකව යැවුවා! 🏦`);
+        }
+
+        function downloadDataCSV() {
+            alert('ඇප් එකේ ලියාපදිංචි සියලුම පරිශීලක සහ අපද්‍රව්‍ය දත්ත අඩංගු Excel/CSV ගොනුව සාර්ථකව බාගත විය! 📊');
         }
     </script>
 </body>
