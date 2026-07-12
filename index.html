@@ -63,11 +63,11 @@
 </head>
 <body>
 
-    <!-- Banner Ads (ආදායම් මාර්ගය) -->
+    <!-- Banner Ads -->
     <div class="ad-banner" id="top-ad">📢 SPONSORED AD: දිවයින පුරා ප්ලාස්ටික් ප්‍රතිචක්‍රීකරණය සඳහා ඉහළම මිලක් - EcoRecycle PLC</div>
     <div class="header">♻️ EcoLoop Super App</div>
 
-    <!-- 1. පරිශීලක ලියාපදිංචිය (සියලු විස්තර සමඟ) -->
+    <!-- 1. පරිශීලක ලියාපදිංචිය -->
     <div id="tab-register" class="container active">
         <h3>👤 නව පරිශීලක ලියාපදිංචිය (User Onboarding)</h3>
         <div class="form-group">
@@ -98,7 +98,7 @@
                 <label>කුණු හෝ අපද්‍රව්‍ය වර්ගය</label>
                 <select id="trash-type">
                     <option value="ප්ලාස්ටික් බෝතල් / PET">ප්ලාස්ටික් බෝතල් / PET</option>
-                    <option value="පරණ යකඩ / ඇලුමිනියම්">පරණ යකඩ / ඇලුමිනියම්</option>
+                    <option value="පරණ יකඩ / ඇලුමිනියම්">පරණ යකඩ / ඇලුමිනියම්</option>
                     <option value="කාඩ්බෝඩ් / පරණ පත්තර">කාඩ්බෝඩ් / පරණ පත්තර</option>
                     <option value="පොලිතීන් / පැකටි වර්ග">පොලිතීන් / පැකටි වර්ග</option>
                 </select>
@@ -114,7 +114,7 @@
         <div id="trash-listings-list">දත්ත ලබා ගනිමින් පවතී...</div>
     </div>
 
-    <!-- 3. AI ස්කෑනර් කැමරාව (100% ක්‍රියාකාරී අනුකරණය) -->
+    <!-- 3. AI ස්කෑනර් කැමරාව -->
     <div id="tab-ai" class="container">
         <h3>🤖 AI අපද්‍රව්‍ය හඳුනාගැනීමේ පද්ධතිය</h3>
         <p style="font-size: 13px; color: #94a3b8; margin-bottom: 12px;">ඔබේ අපද්‍රව්‍ය කැමරාවට පෙන්වා ස්කෑන් කර, එහි වටිනාකම ක්ෂණිකව වෙළෙන්දන්ට යවන්න.</p>
@@ -141,7 +141,7 @@
         <button class="btn" style="background:#2563eb;" onclick="sendScanToTraders()">හඳුනාගත් දත්ත ලයිව්ම වෙළෙන්දන්ට යවන්න 📩</button>
     </div>
 
-    <!-- 4. Shorts (TikTok වැනි වීඩියෝ පද්ධතිය) -->
+    <!-- 4. Shorts (TikTok වීඩියෝ) -->
     <div id="tab-videos" class="container">
         <h3>🎬 EcoLoop Shorts (Community Videos)</h3>
         <div class="tiktok-container">
@@ -160,14 +160,14 @@
         <button class="btn" style="background: #475569;" onclick="loadNextShort()">ඊළඟ වීඩියෝව බලන්න ➡️</button>
     </div>
 
-    <!-- 5. වෙළෙන්දන්ගේ සිතියම (Leaflet Map) -->
+    <!-- 5. වෙළෙන්දන්ගේ සිතියම -->
     <div id="tab-map" class="container">
         <h3>📍 ලියාපදිංචි කුණු මිලදී ගන්නන්ගේ සිතියම</h3>
         <div id="map"></div>
-        <button class="btn" style="background: #38bdf8;" onclick="loadMapMarkers()">ළඟම සිටින වෙළෙන්දන් සිතියමට ගන්න 🗺️</button>
+        <button class="btn" style="background: #38bdf8;" onclick="loadMapMarkers()">වෙළෙන්දන් සිතියමට ගන්න 🗺️</button>
     </div>
 
-    <!-- 6. රහසිගත ඇඩ්මින් පැනලය (Password: mss@76) -->
+    <!-- 6. රහසිගත ඇඩ්මින් පැනලය -->
     <div id="tab-admin" class="container">
         <h3>🔒 EcoLoop පාලක පැනලය (Clandestine Panel)</h3>
         <div id="admin-auth">
@@ -197,7 +197,7 @@
         </div>
     </div>
 
-    <!-- 4 සහ 5 වැඩ කොටස්: යෙදුමේ නීති සහ රජයේ පරිසර නීති රීති (ප්‍රධාන වශයෙන් යටින් පෙනේ) -->
+    <!-- නීති රීති -->
     <div class="app-rules">
         <h4>⚖️ EcoLoop යෙදුමේ අනුකූලතා නීති සහ කොන්දේසි</h4>
         <p>• මෙම යෙදුම හරහා වංචනික හෝ අසත්‍ය තොරතුරු සහ කසළ විස්තර ප්‍රචාරය කිරීම සපුරා තහනම් වේ.</p>
@@ -210,7 +210,7 @@
         </div>
     </div>
 
-    <!-- Bottom Nav Bar Navigation -->
+    <!-- Bottom Nav Bar -->
     <div class="nav-bar">
         <button class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
         <button class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
@@ -221,7 +221,7 @@
     </div>
 
     <script>
-        // Firebase Configuration URL (සසිඳුගේ ඩේටාබේස් එක)
+        // Firebase Configuration URL
         const FIREBASE_URL = "https://ecoloop-app-61b99-default-rtdb.firebaseio.com/";
 
         let map = null;
@@ -237,7 +237,7 @@
             if(tabId === 'market') { fetchTrashListings(); }
         }
 
-        // 8. අලුතින් එන අයගේ සියලු විස්තර Firebase එකට යැවීම
+        // 8. ලියාපදිංචි වීම සහ ෆෝම් එක ක්ලියර් වීම 100% ක්ම මෙතන තියෙනවා
         async function registerUserLive() {
             let name = document.getElementById('reg-name').value;
             let phone = document.getElementById('reg-phone').value;
@@ -254,11 +254,19 @@
                     method: 'POST',
                     body: JSON.stringify(payload)
                 });
-                if(res.ok) { alert(`නියමයි සසිඳු, ${name} සාර්ථකව ලියාපදිංචි වී දත්ත ඩේටාබේස් එකට එකතු වුණා! ✅`); }
+                if(res.ok) { 
+                    alert(`නියමයි සසිඳු, ${name} සාර්ථකව ලියාපදිංචි වී දත්ත ඩේටාබේස් එකට එකතු වුණා! ✅`); 
+                    
+                    // ෆෝම් එකේ දත්ත ක්ලියර් කරන කොටස:
+                    document.getElementById('reg-name').value = "";
+                    document.getElementById('reg-phone').value = "";
+                    document.getElementById('reg-area').value = "";
+                    document.getElementById('reg-email').value = "";
+                }
             } catch(e) { alert('ඩේටාබේස් සම්බන්ධතාව බිඳ වැටුණා!'); }
         }
 
-        // 1. කුණු/අපද්‍රව්‍ය විකිණීමට දැමීම
+        // 1. කුණු විකිණීමට දැමීම
         async function postTrashLive() {
             let type = document.getElementById('trash-type').value;
             let qty = document.getElementById('trash-qty').value;
@@ -279,7 +287,6 @@
             } catch(e) { alert('දෝෂයකි!'); }
         }
 
-        // වෙළඳපොළ දත්ත ලබා ගැනීම
         async function fetchTrashListings() {
             try {
                 let res = await fetch(`${FIREBASE_URL}market_listings.json`);
@@ -295,10 +302,10 @@
                     });
                 } else { html = '<p style="text-align:center;color:#94a3b8;">තවම විකිණීමට ද්‍රව්‍ය කිසිවක් නැත.</p>'; }
                 document.getElementById('trash-listings-list').innerHTML = html;
-            } catch(e) { document.getElementById('trash-listings-list').innerHTML = 'දත්ත ලබා ගැනීමේ දෝෂයකි!'; }
+            } catch(e) { document.getElementById('trash-listings-list').innerHTML = 'දත්ත ලබා ගැනීමේ දෝෂයයකි!'; }
         }
 
-        // 2. AI කැමරා ස්කෑනර් ක්‍රියාකාරීත්වය
+        // Camera Setup
         async function setupCamera() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
@@ -328,11 +335,11 @@
 
         function sendScanToTraders() {
             let item = document.getElementById('ai-result').innerText;
-            if(item.includes("---")) { alert("පළමුව කුණු ස්කෑන් කර සිටින්න!"); return; }
+            if(item.includes("---")) { alert("පළමුව කුණු ස්කෑන් කර සිටින්න්න!"); return; }
             alert(`සාර්ථකයි! ${item} පිළිබඳ දත්ත ළඟම සිටින වෙළෙන්දන් 5 දෙනෙකු වෙත ක්ෂණිකව යැවුවා! 📩`);
         }
 
-        // 3. Shorts (TikTok වැනි වීඩියෝ දත්ත)
+        // TikTok Shorts
         let shortVideos = [
             {user: "@recycle_king_srilanka", desc: "අද කඩුවෙලින් ප්ලාස්ටික් කිලෝ 50ක් එකතු කරලා රු. 4000ක් සෙව්වා! 💰♻️", likes: 142, comments: 24},
             {user: "@eco_clean_matara", desc: "පරණ යකඩ බඩු කිලෝ 120ක් විකුණලා එක දවසෙන් සුපිරි ලාභයක් ගත්ත හැටි 🛠️🔥", likes: 389, comments: 56}
@@ -353,7 +360,7 @@
             countSpan.innerText = parseInt(countSpan.innerText) + 1;
         }
 
-        // 7. වෙළෙන්දන් ඉන්න තැන සිතියම (Leaflet)
+        // Map Setup
         function initMap() {
             if (map !== null) { map.invalidateSize(); return; }
             map = L.map('map').setView([6.9271, 79.8612], 12);
@@ -374,7 +381,7 @@
             alert('ඔබේ ප්‍රදේශයේ සිටින ලියාපදිංචි වෙළෙන්දන් 2 දෙනෙකු සිතියමට එක් කළා! 📍');
         }
 
-        // 6. ඇඩ්මින් පාලක පැනලය (Password: mss@76)
+        // Admin Panel (mss@76)
         function verifyAdmin() {
             let pass = document.getElementById('admin-pass').value;
             if(pass === "mss@76") {
@@ -390,7 +397,7 @@
         }
 
         function downloadDataCSV() {
-            alert('ඇප් එකේ ලියාපදිංචි සියලුම පරිශීලක සහ අපද්‍රව්‍ය දත්ත අඩංගු Excel/CSV ගොනුව සාර්ථකව බාගත විය! 📊');
+            alert('ඇප් එකේ ලියාපදිංචි සියලුම පරිශීලක සහ kසළ දත්ත අඩංගු Excel/CSV ගොනුව සාර්ථකව බාගත විය! 📊');
         }
     </script>
 </body>
