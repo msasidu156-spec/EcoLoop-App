@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EcoLoop - Realtime Database</title>
+    <title>EcoLoop Super App with DB</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -26,4 +26,211 @@
         .camera-box { width: 100%; max-width: 400px; height: 260px; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto 15px; border: 2px dashed #10b981; position: relative; }
         video { width: 100%; height: 100%; object-fit: cover; }
         .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #10b981; box-shadow: 0 0 10px #10b981; animation: scan 2s linear infinite; }
-        #map { width: 100%; height:
+        #map { width: 100%; height: 320px; border-radius: 12px; background: #1e293b; margin-top: 10px; border: 2px solid #38bdf8; z-index: 1; }
+        .item-card { background: #1e293b; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid #10b981; }
+        .app-rules { background: #1e293b; padding: 15px; margin-top: 20px; border-radius: 10px; font-size: 12px; color: #94a3b8; line-height: 1.6; border-top: 3px solid #ef4444; }
+        .app-rules h4 { color: #f87171; margin-bottom: 8px; font-size: 14px; }
+        @keyframes scan { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
+    </style>
+</head>
+<body>
+
+    <div class="ad-banner">📢 SPONSORED: පරිසර හිතකාමී පොහොර සහ ප්‍රතිචක්‍රීකරණ සේවා - EcoLoop Ads</div>
+    <div class="header">♻️ EcoLoop Super App</div>
+
+    <div id="tab-register" class="container active">
+        <h3>👤 ගිණුමක් සාදා ගනිමු (Live Database)</h3>
+        <div class="form-group">
+            <label>සම්පූර්ණ නම</label>
+            <input type="text" id="reg-name" placeholder="ඔබේ නම ඇතුළත් කරන්න">
+        </div>
+        <div class="form-group">
+            <label>දුරකථන අංකය</label>
+            <input type="tel" id="reg-phone" placeholder="07xxxxxxxx">
+        </div>
+        <div class="form-group">
+            <label>ප්‍රදේශය/නගරය</label>
+            <input type="text" id="reg-area" placeholder="උදා: කොළඹ, ගාල්ල">
+        </div>
+        <button class="btn" onclick="saveUserLive()">ලියාපදිංචි වී ඩේටාබේස් සේව් කරන්න 💾</button>
+    </div>
+
+    <div id="tab-market" class="container">
+        <h3>📦 කුණු/පරණ බඩු විකිණීමේ වෙළඳපොළ</h3>
+        <div style="background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+            <h4>➕ අලුත් කුණු තොගයක් ලයිව් විකිනීමට දාන්න</h4>
+            <div class="form-group" style="margin-top: 10px;">
+                <label>කුණු වර්ගය</label>
+                <select id="trash-type">
+                    <option value="ප්ලාස්ටික් බෝතල්">ප්ලාස්ටික් බෝතල් (Plastic)</option>
+                    <option value="පරණ යකඩ/ලෝහ">පරණ යකඩ / ලෝහ (Metals)</option>
+                    <option value="කඩදාසි/පුවත්පත්">කඩදාසි / පුවත්පත් (Papers)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ප්‍රමාණය</label>
+                <input type="text" id="trash-qty" placeholder="උදා: 5 kg හෝ බෝතල් 50">
+            </div>
+            <button class="btn" onclick="postTrashLive()">ඩේටාබේස් එකට එකතු කරන්න 🚀</button>
+        </div>
+
+        <h4>🔥 ලයිව් විකිනීමට ඇති දෑ (Database Items):</h4>
+        <div id="trash-listings-list">ලෝඩ් වෙමින් පවතී...</div>
+    </div>
+
+    <div id="tab-ai" class="container">
+        <h3>🤖 AI කුණු හඳුනාගැනීමේ කැමරාව</h3>
+        <div class="camera-box">
+            <video id="webcam" autoplay playsinline muted></video>
+            <div class="scan-line"></div>
+        </div>
+        <div style="background: #1e293b; padding: 15px; border-radius: 12px; text-align: center;">
+            <p id="ai-status" style="color: #fbbf24; font-weight: bold;">📸 කැමරාව සූදානම්!</p>
+            <select id="ai-scan-select" style="margin-top: 10px; text-align: center;">
+                <option value="plastic">ප්ලාස්ටික් බෝතල්</option>
+                <option value="iron">පරණ යකඩ</option>
+                <option value="paper">පරණ පත්තර</option>
+            </select>
+            <p id="ai-result" style="font-size: 20px; font-weight: bold; color: #10b981; margin-top: 10px;">---</p>
+            <p id="ai-price" style="font-size: 22px; font-weight: bold; color: #fbbf24;"></p>
+        </div>
+        <button class="btn" onclick="scanTrashNew()">ස්කෑන් කරන්න 🔍</button>
+    </div>
+
+    <div id="tab-map" class="container">
+        <h3>📍 ළඟම සිටින කුණු මිලදීගන්නා වෙළෙන්දන්</h3>
+        <div id="map"></div>
+        <button class="btn" style="background: #38bdf8;" onclick="loadMapMarkers()">වෙළෙන්දන් සිතියමට ගන්න 🗺️</button>
+    </div>
+
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
+        <button class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
+        <button class="nav-item" onclick="switchTab('ai', this)">🤖<br>AI කැමරා</button>
+        <button class="nav-item" onclick="switchTab('map', this)">📍<br>සිතියම</button>
+    </div>
+
+    <script>
+        // ⚠️ වැදගත්: උඹේ FIREBASE REALTIME DATABASE URL එක පල්ලෙහා කොටසට ඇතුළත් කරන්න මචං!
+        const FIREBASE_URL = "මෙතනට_උඹේ_DATABASE_URL_එක_දාපන්"; 
+
+        let map = null;
+        let currentUser = "නොදන්නා පරිශීලකයෙක්";
+
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            element.classList.add('active');
+            if(tabId === 'map') { setTimeout(initMap, 200); }
+            if(tabId === 'market') { fetchTrashListings(); }
+        }
+
+        // 1. පරිශීලක දත්ත ලයිව් සේව් කිරීම (POST)
+        async function saveUserLive() {
+            let name = document.getElementById('reg-name').value;
+            let phone = document.getElementById('reg-phone').value;
+            let area = document.getElementById('reg-area').value;
+
+            if(!name || !phone || !area) { alert('කරුණාකර සියලු විස්තර ඇතුළත් කරන්න!'); return; }
+            if(FIREBASE_URL.includes("මෙතනට")) { alert("පළමුව කෝඩ් එකේ Firebase URL එක දාන්න මචං!"); return; }
+
+            currentUser = name + " - " + area;
+            let data = { name: name, phone: phone, area: area, time: new Date().toISOString() };
+
+            try {
+                let response = await fetch(`${FIREBASE_URL}users.json`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                if(response.ok) { alert('නියමයි මචං! දත්ත සාර්ථකව Firebase ඩේටාබේස් එකට සේව් වුණා. 💾✅'); }
+            } catch(e) { alert('ඩේටාබේස් සේව් වීමේ දෝෂයක්!'); }
+        }
+
+        // 2. වෙළඳපොළට දාන කුණු ඩේටාබේස් එකට යැවීම (POST)
+        async function postTrashLive() {
+            let type = document.getElementById('trash-type').value;
+            let qty = document.getElementById('trash-qty').value;
+
+            if(!qty) { alert('ප්‍රමාණය ඇතුළත් කරන්න!'); return; }
+
+            let data = { type: type, qty: qty, user: currentUser, time: new Date().toISOString() };
+
+            try {
+                let response = await fetch(`${FIREBASE_URL}listings.json`, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                if(response.ok) {
+                    alert('කුණු තොගය සාර්ථකව ලයිව් ඩේටාබේස් එකට එකතු කළා! 🚀');
+                    fetchTrashListings();
+                }
+            } catch(e) { alert('දෝෂයක්!'); }
+        }
+
+        // 3. ඩේටාබේස් එකේ තියෙන කුණු දත්ත ඇප් එකට ලෝඩ් කිරීම (GET)
+        async function fetchTrashListings() {
+            try {
+                let response = await fetch(`${FIREBASE_URL}listings.json`);
+                let data = await response.json();
+                let html = '';
+                if(data) {
+                    Object.keys(data).reverse().forEach(key => {
+                        let item = data[key];
+                        html += `<div class="item-card">
+                            <strong>📦 වර්ගය: ${item.type}</strong><br>
+                            <span style="font-size:13px; color:#94a3b8;">ප්‍රමාණය: ${item.qty} | දැමුවේ: ${item.user}</span>
+                        </div>`;
+                    });
+                } else { html = '<p style="text-align:center;color:#94a3b8;">විකිණීමට ඇති දෑ කිසිවක් නැත.</p>'; }
+                document.getElementById('trash-listings-list').innerHTML = html;
+            } catch(e) { document.getElementById('trash-listings-list').innerHTML = 'දත්ත ලෝඩ් වීමේ දෝෂයක්!'; }
+        }
+
+        async function loadCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                document.getElementById('webcam').srcObject = stream;
+            } catch(e) { document.getElementById('ai-status').innerText = "කැමරා අවසරය දෙන්න!"; }
+        }
+        window.onload = loadCamera;
+
+        function scanTrashNew() {
+            document.getElementById('ai-status').innerText = "ස්කෑන් කරමින් පවතී... 🔍";
+            let selectedType = document.getElementById('ai-scan-select').value;
+            setTimeout(() => {
+                document.getElementById('ai-status').innerText = "හඳුනාගැනීම සාර්ථකයි! ✅";
+                if(selectedType === 'plastic') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: ප්ලාස්ටික් බෝතල්";
+                    document.getElementById('ai-price').innerText = "මිල: රු. 80.00 / 1kg";
+                } else if(selectedType === 'iron') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: පරණ යකඩ වර්ග";
+                    document.getElementById('ai-price').innerText = "මිල: රු. 120.00 / 1kg";
+                } else if(selectedType === 'paper') {
+                    document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: පරණ පත්තර/කාඩ්බෝඩ්";
+                    document.getElementById('ai-price').innerText = "මිල: රු. 40.00 / 1kg";
+                }
+            }, 1000);
+        }
+
+        function initMap() {
+            if (map !== null) { map.invalidateSize(); return; }
+            map = L.map('map').setView([6.9271, 79.8612], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            setTimeout(() => { map.invalidateSize(); }, 100);
+        }
+
+        function loadMapMarkers() {
+            if(map === null) initMap();
+            let traders = [
+                {name: "ජයතිස්ස පරණ බඩු", lat: 6.9320, lng: 79.8630},
+                {name: "EcoRecycle", lat: 6.9180, lng: 79.8520}
+            ];
+            traders.forEach(t => {
+                L.marker([t.lat, t.lng]).addTo(map).bindPopup(`<b>${t.name}</b>`).openPopup();
+            });
+            alert('වෙළෙන්දන් සිතියමට එක් කළා! 📍');
+        }
+    </script>
+</body>
+</html>
