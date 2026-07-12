@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EcoLoop Super App - Live Real AI</title>
+    <title>EcoLoop Super App - Persistent Auth</title>
     
-    <!-- Leaflet Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
@@ -29,7 +28,7 @@
         #canvas { display: none; }
         #map { width: 100%; height: 320px; border-radius: 12px; background: #1e293b; margin-top: 10px; border: 2px solid #38bdf8; }
         .item-card { background: #1e293b; padding: 14px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #10b981; }
-        .app-rules { background: #1e293b; padding: 18px; margin: 25px 15px 15px 15px; border-radius: 12px; font-size: 12px; color: #94a3b8; line-height: 1.6; border-top: 4px solid #ef4444; }
+        .user-welcome-box { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #334155; text-align: center; }
     </style>
 </head>
 <body>
@@ -37,17 +36,26 @@
     <div class="ad-banner">📢 SPONSORED: EcoRecycle PLC - ප්‍රතිචක්‍රීකරණයට ඉහළම මිලක්</div>
     <div class="header">♻️ EcoLoop REAL AI App</div>
 
-    <!-- 1. USER REGISTER -->
     <div id="tab-register" class="container active">
-        <h3>👤 නව පරිශීලක ලියාපදිංචිය</h3>
-        <div class="form-group"><label>නම</label><input type="text" id="reg-name"></div>
-        <div class="form-group"><label>දුරකථනය</label><input type="tel" id="reg-phone"></div>
-        <div class="form-group"><label>ප්‍රදේශය</label><input type="text" id="reg-area"></div>
-        <div class="form-group"><label>ඊමේල්</label><input type="email" id="reg-email"></div>
-        <button class="btn" onclick="registerUserLive()">රෙජිස්ටර් වෙන්න 💾</button>
+        <div id="register-form-view">
+            <h3>👤 නව පරිශීලක ලියාපදිංචිය</h3>
+            <div class="form-group"><label>නම</label><input type="text" id="reg-name"></div>
+            <div class="form-group"><label>දුරකථනය</label><input type="tel" id="reg-phone"></div>
+            <div class="form-group"><label>ප්‍රදේශය</label><input type="text" id="reg-area"></div>
+            <div class="form-group"><label>ඊමේල්</label><input type="email" id="reg-email"></div>
+            <button class="btn" onclick="registerUserLive()">රෙජිස්ටර් වෙන්න 💾</button>
+        </div>
+        
+        <div id="profile-view" style="display:none;">
+            <h3>👤 ඔබේ EcoLoop ගිණුම</h3>
+            <div class="user-welcome-box">
+                <h4 style="color:#10b981; font-size:18px;" id="welcome-text">ආයුබෝවන්!</h4>
+                <p style="font-size:13px; color:#94a3b8; margin-top:5px;" id="welcome-area">ප්‍රදේශය: --</p>
+                <button class="btn" style="background:#ef4444; font-size:12px; padding:6px; max-width:150px; margin:15px auto 0;" onclick="logoutUser()">Log Out වෙන්න 🏃‍♂️</button>
+            </div>
+        </div>
     </div>
 
-    <!-- 2. MARKET -->
     <div id="tab-market" class="container">
         <h3>📦 කුණු ගනුදෙනු මධ්‍යස්ථානය</h3>
         <div style="background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
@@ -65,18 +73,13 @@
         <div id="trash-listings-list">ලෝඩ් වෙමින්...</div>
     </div>
 
-    <!-- 3. REAL AI CAMERA -->
     <div id="tab-ai" class="container">
         <h3>🤖 REAL AI අපද්‍රව්‍ය හඳුනාගැනීම</h3>
-        <p style="font-size:12px; color:#94a3b8; margin-bottom:10px;">කැමරාවට කුණු පෙන්වා "Scan කරන්න" බටන් එක ඔබන්න.</p>
-        
         <div class="camera-box">
             <video id="webcam" autoplay playsinline muted></video>
         </div>
         <canvas id="canvas"></canvas>
-        
         <button class="btn" style="background:#10b981; margin-bottom:15px;" onclick="captureAndRecognize()">📸 Scan කරන්න (AI Detect)</button>
-        
         <div style="background: #1e293b; padding: 15px; border-radius: 12px; text-align: center;">
             <p id="ai-status" style="color: #fbbf24; font-weight: bold;">AI පද්ධතිය සූදානම් 🟢</p>
             <p id="ai-result" style="font-size: 20px; font-weight: bold; color: #34d399; margin-top: 10px;">---</p>
@@ -84,21 +87,16 @@
         <button class="btn" style="background:#2563eb;" onclick="sendScanToTraders()">හඳුනාගත් දත්ත වෙළෙන්දන්ට යවන්න 📩</button>
     </div>
 
-    <!-- 4. SHORTS -->
     <div id="tab-videos" class="container">
         <h3>🎬 EcoLoop Shorts</h3>
-        <div class="tiktok-container" style="text-align:center; padding:50px 0; background:#1e293b; border-radius:12px;">
-            🎥 [Eco Shorts Video Live]
-        </div>
+        <div style="text-align:center; padding:50px 0; background:#1e293b; border-radius:12px;">🎥 [Eco Shorts Video Live]</div>
     </div>
 
-    <!-- 5. MAP -->
     <div id="tab-map" class="container">
         <h3>📍 වෙළෙන්දන්ගේ සිතියම</h3>
         <div id="map"></div>
     </div>
 
-    <!-- 6. ADMIN -->
     <div id="tab-admin" class="container">
         <h3>🔒 ඇඩ්මින් පැනලය</h3>
         <div id="admin-auth">
@@ -111,8 +109,8 @@
     </div>
 
     <div class="nav-bar">
-        <button class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
-        <button class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
+        <button id="nav-btn-register" class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
+        <button id="nav-btn-market" class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
         <button class="nav-item" onclick="switchTab('ai', this)">🤖<br>AI කැමරා</button>
         <button class="nav-item" onclick="switchTab('videos', this)">🎬<br>Shorts</button>
         <button class="nav-item" onclick="switchTab('map', this)">📍<br>සිතියම</button>
@@ -123,8 +121,25 @@
         const FIREBASE_URL = "https://ecoloop-app-61b99-default-rtdb.firebaseio.com/"; 
 
         let videoElement, canvasElement, map;
-        let activeUser = { name: "නොදන්නා පරිශීලකයෙක්", area: "ලංකාව" };
+        let activeUser = null;
         let currentPrediction = "";
+
+        // 🟢 ඇප් එක ඔන් වෙද්දීම කලින් සේව් කරපු කෙනෙක් ඉන්නවද බලන ක්‍රියාවලිය
+        function checkExistingUser() {
+            let savedUser = localStorage.getItem("ecoloop_user");
+            if (savedUser) {
+                activeUser = JSON.parse(savedUser);
+                
+                // Form එක හංගලා Profile එක පෙන්නන්න
+                document.getElementById("register-form-view").style.display = "none";
+                document.getElementById("profile-view").style.display = "block";
+                document.getElementById("welcome-text").innerText = "ආයුබෝවන්, " + activeUser.name + "! 👋";
+                document.getElementById("welcome-area").innerText = "ප්‍රදේශය: " + activeUser.area;
+                
+                // කෙලින්ම Market ටැබ් එකට යවන්න
+                switchTab('market', document.getElementById('nav-btn-market'));
+            }
+        }
 
         function switchTab(tabId, element) {
             document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
@@ -135,25 +150,49 @@
             if(tabId === 'market') { fetchTrashListings(); }
         }
 
-        // Firebase Functions
+        // Live Registration with LocalStorage
         async function registerUserLive() {
             let name = document.getElementById('reg-name').value;
             let phone = document.getElementById('reg-phone').value;
             let area = document.getElementById('reg-area').value;
             let email = document.getElementById('reg-email').value;
             if(!name || !phone || !area || !email) { alert('සියල්ල ඇතුළත් කරන්න!'); return; }
+            
             activeUser = { name: name, area: area };
+            
+            // 🟢 ෆෝන් එකේ දත්ත දිගටම තියාගන්න සේව් කිරීම
+            localStorage.setItem("ecoloop_user", JSON.stringify(activeUser));
+            
             try {
                 await fetch(`${FIREBASE_URL}registered_users.json`, { method: 'POST', body: JSON.stringify({name, phone, area, email}) });
                 alert('සාර්ථකව ලියාපදිංචි වුණා! ✅');
-            } catch(e) {}
+                
+                // UI එක වෙනස් කිරීම
+                document.getElementById("register-form-view").style.display = "none";
+                document.getElementById("profile-view").style.display = "block";
+                document.getElementById("welcome-text").innerText = "ආයුබෝවන්, " + name + "! 👋";
+                document.getElementById("welcome-area").innerText = "ප්‍රදේශය: " + area;
+                
+                switchTab('market', document.getElementById('nav-btn-market'));
+            } catch(e) { alert("දත්ත ගබඩා කිරීමේ දෝෂයක්!"); }
+        }
+
+        // Log out වෙලා අලුත් කෙනෙක්ට ලොග් වෙන්න දීම
+        function logoutUser() {
+            localStorage.removeItem("ecoloop_user");
+            activeUser = null;
+            document.getElementById("register-form-view").style.display = "block";
+            document.getElementById("profile-view").style.display = "none";
+            switchTab('register', document.getElementById('nav-btn-register'));
         }
 
         async function postTrashLive() {
+            if(!activeUser) { alert("කරුණාකර පළමුව රෙජිස්ටර් වන්න!"); return; }
             let type = document.getElementById('trash-type').value;
             let qty = document.getElementById('trash-qty').value;
             await fetch(`${FIREBASE_URL}market_listings.json`, { method: 'POST', body: JSON.stringify({type, qty, uploader: activeUser.name}) });
             alert('වෙළඳපොළට දැම්මා! 🚀');
+            fetchTrashListings();
         }
 
         async function fetchTrashListings() {
@@ -162,66 +201,39 @@
             let html = '';
             if(data) {
                 Object.keys(data).forEach(id => {
-                    html += `<div class="item-card"><strong>📦 ${data[id].type}</strong> (${data[id].qty})</div>`;
+                    html += `<div class="item-card"><strong>📦 ${data[id].type}</strong> (${data[id].qty}) <br><span style="font-size:11px;color:#94a3b8;">දැමුවේ: ${data[id].uploader || 'Anonymous'}</span></div>`;
                 });
-            } else {
-                html = '<p style="color:#94a3b8;font-size:13px;">තවම අයිතම නැත.</p>';
-            }
+            } else { html = '<p style="color:#94a3b8;font-size:13px;">තවම අයිතම නැත.</p>'; }
             document.getElementById('trash-listings-list').innerHTML = html;
         }
 
-        // Camera Initialization
         async function initCamera() {
             videoElement = document.getElementById('webcam');
             canvasElement = document.getElementById('canvas');
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: "environment" }, 
-                    audio: false 
-                });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
                 videoElement.srcObject = stream;
-            } catch(e) {
-                document.getElementById('ai-status').innerText = "කැමරා දෝෂයකි!";
-            }
+            } catch(e) { document.getElementById('ai-status').innerText = "කැමරා දෝෂයකි!"; }
         }
 
-        // 🧠 Cloud Hugging Face API මඟින් රියල්ම AI හඳුනාගැනීම
         async function captureAndRecognize() {
             if (!videoElement.srcObject) { alert("කැමරාව ක්‍රියාත්මක නැත!"); return; }
-            
             document.getElementById('ai-status').innerText = "AI ස්කෑන් වෙමින් පවතී... ⏳";
-            document.getElementById('ai-result').innerText = "විශ්ලේෂණය කරමින්...";
-
-            // වීඩියෝ එකෙන් Snapshot එකක් ගැනීම
             const context = canvasElement.getContext('2d');
             canvasElement.width = videoElement.videoWidth;
             canvasElement.height = videoElement.videoHeight;
             context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
             
-            // Image එක Blob එකක් බවට පත් කිරීම
             canvasElement.toBlob(async (blob) => {
                 try {
-                    // නොමිලේ දෙන සුපිරි Google ViT AI Model එකක් පාවිච්චි කිරීම
-                    const response = await fetch(
-                        "https://api-inference.huggingface.co/models/google/vit-base-patch16-224",
-                        {
-                            method: "POST",
-                            body: blob,
-                        }
-                    );
+                    const response = await fetch("https://api-inference.huggingface.co/models/google/vit-base-patch16-224", { method: "POST", body: blob });
                     const result = await response.json();
-                    
                     if(result && result.length > 0) {
                         currentPrediction = result[0].label;
                         document.getElementById('ai-status').innerText = "ස්කෑන් කිරීම සාර්ථකයි! ✅";
                         document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: " + currentPrediction;
-                    } else {
-                        document.getElementById('ai-result').innerText = "හඳුනාගත නොහැකි වුණා. නැවත උත්සාහ කරන්න.";
                     }
-                } catch (error) {
-                    document.getElementById('ai-status').innerText = "සර්වර් දෝෂයකි!";
-                    document.getElementById('ai-result').innerText = "Error: AI load වුණේ නැත.";
-                }
+                } catch (error) { document.getElementById('ai-status').innerText = "සර්වර් දෝෂයකි!"; }
             }, 'image/jpeg');
         }
 
@@ -237,12 +249,14 @@
         }
 
         function verifyAdmin() {
-            if(document.getElementById('admin-pass').value === "mss@76") {
-                document.getElementById('admin-dashboard').style.display = "block";
-            }
+            if(document.getElementById('admin-pass').value === "mss@76") { document.getElementById('admin-dashboard').style.display = "block"; }
         }
 
-        window.onload = initCamera;
+        // ඇප් එක පටන් ගනිද්දීම ක්‍රියාත්මක වන දේවල්
+        window.onload = function() {
+            checkExistingUser();
+            initCamera();
+        };
     </script>
 </body>
 </html>
