@@ -1,262 +1,199 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EcoLoop Super App - Persistent Auth</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoLoop Pro - Smart Waste Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f172a; color: white; padding-bottom: 80px; }
-        .ad-banner { background: #334155; color: #fbbf24; text-align: center; padding: 10px; font-size: 13px; font-weight: bold; font-style: italic; border-bottom: 1px solid #475569; }
-        .header { background: #1e293b; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; color: #10b981; border-bottom: 2px solid #10b981; }
-        .container { padding: 15px; display: none; max-width: 600px; margin: 0 auto; }
-        .container.active { display: block; }
-        h3 { color: #34d399; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 12px 0; border-top: 2px solid #334155; z-index: 1000; }
-        .nav-item { color: #94a3b8; font-size: 11px; text-align: center; cursor: pointer; background: none; border: none; width: 16%; }
-        .nav-item.active { color: #10b981; font-weight: bold; }
-        .form-group { margin-bottom: 14px; }
-        label { display: block; font-size: 13px; color: #94a3b8; margin-bottom: 5px; }
-        input, select { width: 100%; padding: 12px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 8px; }
-        .btn { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .camera-box { width: 100%; max-width: 400px; height: 260px; background: #000; border-radius: 12px; overflow: hidden; margin: 0 auto 15px; border: 2px dashed #10b981; position: relative; }
-        video { width: 100%; height: 100%; object-fit: cover; }
-        #canvas { display: none; }
-        #map { width: 100%; height: 320px; border-radius: 12px; background: #1e293b; margin-top: 10px; border: 2px solid #38bdf8; }
-        .item-card { background: #1e293b; padding: 14px; border-radius: 10px; margin-bottom: 12px; border-left: 4px solid #10b981; }
-        .user-welcome-box { background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #334155; text-align: center; }
-    </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
 
-    <div class="ad-banner">📢 SPONSORED: EcoRecycle PLC - ප්‍රතිචක්‍රීකරණයට ඉහළම මිලක්</div>
-    <div class="header">♻️ EcoLoop REAL AI App</div>
-
-    <div id="tab-register" class="container active">
-        <div id="register-form-view">
-            <h3>👤 නව පරිශීලක ලියාපදිංචිය</h3>
-            <div class="form-group"><label>නම</label><input type="text" id="reg-name"></div>
-            <div class="form-group"><label>දුරකථනය</label><input type="tel" id="reg-phone"></div>
-            <div class="form-group"><label>ප්‍රදේශය</label><input type="text" id="reg-area"></div>
-            <div class="form-group"><label>ඊමේල්</label><input type="email" id="reg-email"></div>
-            <button class="btn" onclick="registerUserLive()">රෙජිස්ටර් වෙන්න 💾</button>
+    <!-- Auth Modal -->
+    <div id="auth-gate" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-sm w-full shadow-2xl">
+            <h2 class="text-2xl font-bold text-emerald-400 mb-2">Welcome to EcoLoop</h2>
+            <p class="text-slate-400 text-xs mb-4">Enter details to access real-time waste trade & AI vision.</p>
+            <form onsubmit="handleLogin(event)" class="space-y-3">
+                <input type="text" id="u-name" placeholder="Full Name" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                <input type="tel" id="u-phone" placeholder="Phone Number" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                <input type="text" id="u-area" placeholder="City / Area" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-2.5 rounded-xl text-sm transition">Continue to App</button>
+            </form>
         </div>
-        
-        <div id="profile-view" style="display:none;">
-            <h3>👤 ඔබේ EcoLoop ගිණුම</h3>
-            <div class="user-welcome-box">
-                <h4 style="color:#10b981; font-size:18px;" id="welcome-text">ආයුබෝවන්!</h4>
-                <p style="font-size:13px; color:#94a3b8; margin-top:5px;" id="welcome-area">ප්‍රදේශය: --</p>
-                <button class="btn" style="background:#ef4444; font-size:12px; padding:6px; max-width:150px; margin:15px auto 0;" onclick="logoutUser()">Log Out වෙන්න 🏃‍♂️</button>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
+        <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold text-sm">♻️</div>
+                <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent">EcoLoop Pro</span>
             </div>
+            <span id="user-badge" class="text-xs font-semibold bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Guest</span>
         </div>
-    </div>
+    </nav>
 
-    <div id="tab-market" class="container">
-        <h3>📦 කුණු ගනුදෙනු මධ්‍යස්ථානය</h3>
-        <div style="background: #1e293b; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-            <div class="form-group">
-                <label>කුණු වර්ගය</label>
-                <select id="trash-type">
-                    <option value="ප්ලාස්ටික් බෝතල්">ප්ලාස්ටික් බෝතල්</option>
-                    <option value="පරණ යකඩ">පරණ යකඩ</option>
-                    <option value="කාඩ්බෝඩ්/පත්තර">කාඩ්බෝඩ්/පත්තර</option>
-                </select>
+    <main class="max-w-md mx-auto p-4 space-y-4 pb-20">
+        <!-- Dashboard Overview -->
+        <section class="grid grid-cols-2 gap-3">
+            <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">PET Plastic</p>
+                <p id="price-pet" class="text-xl font-bold text-emerald-400 mt-1">Rs. 120/kg</p>
             </div>
-            <div class="form-group"><label>ප්‍රමාණය</label><input type="text" id="trash-qty"></div>
-            <button class="btn" onclick="postTrashLive()">වෙළඳපොළට දාන්න 🚀</button>
-        </div>
-        <div id="trash-listings-list">ලෝඩ් වෙමින්...</div>
-    </div>
+            <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl">
+                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Cardboard</p>
+                <p id="price-cardboard" class="text-xl font-bold text-emerald-400 mt-1">Rs. 45/kg</p>
+            </div>
+        </section>
 
-    <div id="tab-ai" class="container">
-        <h3>🤖 REAL AI අපද්‍රව්‍ය හඳුනාගැනීම</h3>
-        <div class="camera-box">
-            <video id="webcam" autoplay playsinline muted></video>
-        </div>
-        <canvas id="canvas"></canvas>
-        <button class="btn" style="background:#10b981; margin-bottom:15px;" onclick="captureAndRecognize()">📸 Scan කරන්න (AI Detect)</button>
-        <div style="background: #1e293b; padding: 15px; border-radius: 12px; text-align: center;">
-            <p id="ai-status" style="color: #fbbf24; font-weight: bold;">AI පද්ධතිය සූදානම් 🟢</p>
-            <p id="ai-result" style="font-size: 20px; font-weight: bold; color: #34d399; margin-top: 10px;">---</p>
-        </div>
-        <button class="btn" style="background:#2563eb;" onclick="sendScanToTraders()">හඳුනාගත් දත්ත වෙළෙන්දන්ට යවන්න 📩</button>
-    </div>
+        <!-- AI Waste Classifier -->
+        <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+            <div class="flex items-center justify-between">
+                <h3 class="font-bold text-sm text-slate-200">AI Scanner</h3>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">MobileNet v2</span>
+            </div>
+            <div class="relative bg-slate-950 rounded-xl overflow-hidden aspect-video border border-slate-800 flex items-center justify-center">
+                <video id="webcam" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+                <div id="camera-placeholder" class="text-center p-4">
+                    <p class="text-xs text-slate-500">Scan material to classify automatically</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="startCamera()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold py-2.5 rounded-xl border border-slate-700 transition">Open Camera</button>
+                <button onclick="classifyImage()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold py-2.5 rounded-xl transition">Analyze Waste</button>
+            </div>
+            <div id="ai-result" class="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-xl border border-slate-800 hidden"></div>
+        </section>
 
-    <div id="tab-videos" class="container">
-        <h3>🎬 EcoLoop Shorts</h3>
-        <div style="text-align:center; padding:50px 0; background:#1e293b; border-radius:12px;">🎥 [Eco Shorts Video Live]</div>
-    </div>
+        <!-- Map Section -->
+        <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+            <h3 class="font-bold text-sm text-slate-200">Collector Map</h3>
+            <div id="map" class="h-44 rounded-xl border border-slate-800"></div>
+        </section>
 
-    <div id="tab-map" class="container">
-        <h3>📍 වෙළෙන්දන්ගේ සිතියම</h3>
-        <div id="map"></div>
-    </div>
-
-    <div id="tab-admin" class="container">
-        <h3>🔒 ඇඩ්මින් පැනලය</h3>
-        <div id="admin-auth">
-            <input type="password" id="admin-pass" placeholder="Password">
-            <button class="btn" onclick="verifyAdmin()">Login</button>
-        </div>
-        <div id="admin-dashboard" style="display:none;">
-            <h4>මුළු ආදායම: රු. 84,320.00</h4>
-        </div>
-    </div>
-
-    <div class="nav-bar">
-        <button id="nav-btn-register" class="nav-item active" onclick="switchTab('register', this)">👤<br>පරිශීලක</button>
-        <button id="nav-btn-market" class="nav-item" onclick="switchTab('market', this)">📦<br>වෙළඳපොළ</button>
-        <button class="nav-item" onclick="switchTab('ai', this)">🤖<br>AI කැමරා</button>
-        <button class="nav-item" onclick="switchTab('videos', this)">🎬<br>Shorts</button>
-        <button class="nav-item" onclick="switchTab('map', this)">📍<br>සිතියම</button>
-        <button class="nav-item" onclick="switchTab('admin', this)">🔒<br>ඇඩ්මින්</button>
-    </div>
+        <!-- Admin Control -->
+        <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+            <h3 class="font-bold text-sm text-slate-200">Admin Panel</h3>
+            <div id="admin-lock" class="flex gap-2">
+                <input type="password" id="admin-key" placeholder="Admin Key" class="flex-1 bg-slate-800 border border-slate-700 p-2 rounded-xl text-xs">
+                <button onclick="unlockAdmin()" class="bg-slate-800 hover:bg-slate-700 text-xs font-bold px-4 rounded-xl border border-slate-700">Unlock</button>
+            </div>
+            <div id="admin-dashboard" class="hidden space-y-3 pt-2 border-t border-slate-800">
+                <p class="text-xs font-semibold text-emerald-400">Registered Users (Live Database)</p>
+                <div id="user-registry" class="max-h-40 overflow-y-auto space-y-1.5 text-xs"></div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        const FIREBASE_URL = "https://ecoloop-app-61b99-default-rtdb.firebaseio.com/"; 
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAoe0G3ozEBElszj1dtdY-yvtztYrjsCow",
+            authDomain: "ecoloop-v-69658.firebaseapp.com",
+            projectId: "ecoloop-v-69658",
+            storageBucket: "ecoloop-v-69658.firebasestorage.app",
+            messagingSenderId: "644855661630",
+            appId: "1:644855661630:web:be06fc4089b07ac5c9bd6f",
+            measurementId: "G-6J2S23PENM",
+            databaseURL: "https://ecoloop-v-69658-default-rtdb.asia-southeast1.firebasedatabase.app/"
+        };
 
-        let videoElement, canvasElement, map;
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         let activeUser = null;
-        let currentPrediction = "";
+        let model = null;
+        const ADMIN_PASS = "mss@76";
 
-        // 🟢 ඇප් එක ඔන් වෙද්දීම කලින් සේව් කරපු කෙනෙක් ඉන්නවද බලන ක්‍රියාවලිය
-        function checkExistingUser() {
-            let savedUser = localStorage.getItem("ecoloop_user");
-            if (savedUser) {
-                activeUser = JSON.parse(savedUser);
-                
-                // Form එක හංගලා Profile එක පෙන්නන්න
-                document.getElementById("register-form-view").style.display = "none";
-                document.getElementById("profile-view").style.display = "block";
-                document.getElementById("welcome-text").innerText = "ආයුබෝවන්, " + activeUser.name + "! 👋";
-                document.getElementById("welcome-area").innerText = "ප්‍රදේශය: " + activeUser.area;
-                
-                // කෙලින්ම Market ටැබ් එකට යවන්න
-                switchTab('market', document.getElementById('nav-btn-market'));
+        // Handle User Login & Firebase Persistence
+        function handleLogin(e) {
+            e.preventDefault();
+            const name = document.getElementById('u-name').value;
+            const phone = document.getElementById('u-phone').value;
+            const area = document.getElementById('u-area').value;
+
+            activeUser = { name, phone, area, joinedAt: new Date().toLocaleString() };
+            
+            // Save user to Cloud Database
+            database.ref('users/' + phone.replace(/[^0-9]/g, '')).set(activeUser);
+
+            document.getElementById('auth-gate').classList.add('hidden');
+            document.getElementById('user-badge').innerText = activeUser.name;
+        }
+
+        // Camera & AI Classifier Setup
+        async function startCamera() {
+            const video = document.getElementById('webcam');
+            const placeholder = document.getElementById('camera-placeholder');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                video.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                if(!model) model = await mobilenet.load();
+            } catch(err) {
+                alert("Camera access denied or unavailable.");
             }
         }
 
-        function switchTab(tabId, element) {
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            element.classList.add('active');
-            if(tabId === 'map') { setTimeout(initMap, 250); }
-            if(tabId === 'market') { fetchTrashListings(); }
+        async function classifyImage() {
+            const video = document.getElementById('webcam');
+            const resultDiv = document.getElementById('ai-result');
+            if(!model || video.classList.contains('hidden')) {
+                alert("Please open the camera first!");
+                return;
+            }
+            resultDiv.classList.remove('hidden');
+            resultDiv.innerText = "Analyzing material...";
+            const predictions = await model.classify(video);
+            if(predictions.length > 0) {
+                resultDiv.innerHTML = `<strong>Detected:</strong> ${predictions[0].className}<br><strong>Confidence:</strong> ${(predictions[0].probability * 100).toFixed(1)}%`;
+            }
         }
 
-        // Live Registration with LocalStorage
-        async function registerUserLive() {
-            let name = document.getElementById('reg-name').value;
-            let phone = document.getElementById('reg-phone').value;
-            let area = document.getElementById('reg-area').value;
-            let email = document.getElementById('reg-email').value;
-            if(!name || !phone || !area || !email) { alert('සියල්ල ඇතුළත් කරන්න!'); return; }
-            
-            activeUser = { name: name, area: area };
-            
-            // 🟢 ෆෝන් එකේ දත්ත දිගටම තියාගන්න සේව් කිරීම
-            localStorage.setItem("ecoloop_user", JSON.stringify(activeUser));
-            
-            try {
-                await fetch(`${FIREBASE_URL}registered_users.json`, { method: 'POST', body: JSON.stringify({name, phone, area, email}) });
-                alert('සාර්ථකව ලියාපදිංචි වුණා! ✅');
-                
-                // UI එක වෙනස් කිරීම
-                document.getElementById("register-form-view").style.display = "none";
-                document.getElementById("profile-view").style.display = "block";
-                document.getElementById("welcome-text").innerText = "ආයුබෝවන්, " + name + "! 👋";
-                document.getElementById("welcome-area").innerText = "ප්‍රදේශය: " + area;
-                
-                switchTab('market', document.getElementById('nav-btn-market'));
-            } catch(e) { alert("දත්ත ගබඩා කිරීමේ දෝෂයක්!"); }
-        }
-
-        // Log out වෙලා අලුත් කෙනෙක්ට ලොග් වෙන්න දීම
-        function logoutUser() {
-            localStorage.removeItem("ecoloop_user");
-            activeUser = null;
-            document.getElementById("register-form-view").style.display = "block";
-            document.getElementById("profile-view").style.display = "none";
-            switchTab('register', document.getElementById('nav-btn-register'));
-        }
-
-        async function postTrashLive() {
-            if(!activeUser) { alert("කරුණාකර පළමුව රෙජිස්ටර් වන්න!"); return; }
-            let type = document.getElementById('trash-type').value;
-            let qty = document.getElementById('trash-qty').value;
-            await fetch(`${FIREBASE_URL}market_listings.json`, { method: 'POST', body: JSON.stringify({type, qty, uploader: activeUser.name}) });
-            alert('වෙළඳපොළට දැම්මා! 🚀');
-            fetchTrashListings();
-        }
-
-        async function fetchTrashListings() {
-            let res = await fetch(`${FIREBASE_URL}market_listings.json`);
-            let data = await res.json();
-            let html = '';
-            if(data) {
-                Object.keys(data).forEach(id => {
-                    html += `<div class="item-card"><strong>📦 ${data[id].type}</strong> (${data[id].qty}) <br><span style="font-size:11px;color:#94a3b8;">දැමුවේ: ${data[id].uploader || 'Anonymous'}</span></div>`;
-                });
-            } else { html = '<p style="color:#94a3b8;font-size:13px;">තවම අයිතම නැත.</p>'; }
-            document.getElementById('trash-listings-list').innerHTML = html;
-        }
-
-        async function initCamera() {
-            videoElement = document.getElementById('webcam');
-            canvasElement = document.getElementById('canvas');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
-                videoElement.srcObject = stream;
-            } catch(e) { document.getElementById('ai-status').innerText = "කැමරා දෝෂයකි!"; }
-        }
-
-        async function captureAndRecognize() {
-            if (!videoElement.srcObject) { alert("කැමරාව ක්‍රියාත්මක නැත!"); return; }
-            document.getElementById('ai-status').innerText = "AI ස්කෑන් වෙමින් පවතී... ⏳";
-            const context = canvasElement.getContext('2d');
-            canvasElement.width = videoElement.videoWidth;
-            canvasElement.height = videoElement.videoHeight;
-            context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
-            
-            canvasElement.toBlob(async (blob) => {
-                try {
-                    const response = await fetch("https://api-inference.huggingface.co/models/google/vit-base-patch16-224", { method: "POST", body: blob });
-                    const result = await response.json();
-                    if(result && result.length > 0) {
-                        currentPrediction = result[0].label;
-                        document.getElementById('ai-status').innerText = "ස්කෑන් කිරීම සාර්ථකයි! ✅";
-                        document.getElementById('ai-result').innerText = "ද්‍රව්‍යය: " + currentPrediction;
-                    }
-                } catch (error) { document.getElementById('ai-status').innerText = "සර්වර් දෝෂයකි!"; }
-            }, 'image/jpeg');
-        }
-
-        function sendScanToTraders() {
-            if(!currentPrediction) { alert("පළමුව AI එකෙන් කුණු වර්ගයක් හඳුනාගන්න!"); return; }
-            alert(`හඳුනාගත් AI දත්ත (${currentPrediction}) වෙළෙන්දන්ට යැවුවා! 📩`);
-        }
-
-        function initMap() {
-            if(map != null) return;
-            map = L.map('map').setView([6.9271, 79.8612], 12);
+        // Map Initialization
+        window.addEventListener('load', () => {
+            const map = L.map('map').setView([6.9271, 79.8612], 11);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        }
+            L.marker([6.9271, 79.8612]).addTo(map).bindPopup('Central Recycling Hub').openPopup();
+        });
 
-        function verifyAdmin() {
-            if(document.getElementById('admin-pass').value === "mss@76") { document.getElementById('admin-dashboard').style.display = "block"; }
-        }
+        // Admin Dashboard Integration
+        function unlockAdmin() {
+            if(document.getElementById('admin-key').value === ADMIN_PASS) {
+                document.getElementById('admin-lock').classList.add('hidden');
+                document.getElementById('admin-dashboard').classList.remove('hidden');
 
-        // ඇප් එක පටන් ගනිද්දීම ක්‍රියාත්මක වන දේවල්
-        window.onload = function() {
-            checkExistingUser();
-            initCamera();
-        };
+                // Real-time synchronization with Firebase
+                database.ref('users').on('value', (snapshot) => {
+                    const users = snapshot.val();
+                    let html = '';
+                    if(users) {
+                        for(let id in users) {
+                            html += `
+                                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                    <p class="font-bold text-emerald-400">${users[id].name}</p>
+                                    <p class="text-slate-400">Phone: ${users[id].phone} | Area: ${users[id].area}</p>
+                                </div>
+                            `;
+                        }
+                    } else {
+                        html = '<p class="text-slate-500">No users found.</p>';
+                    }
+                    document.getElementById('user-registry').innerHTML = html;
+                });
+            } else {
+                alert("Invalid Password!");
+            }
+        }
     </script>
 </body>
 </html>
