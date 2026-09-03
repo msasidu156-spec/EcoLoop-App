@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoLoop Pro - Smart Waste Platform</title>
+    <title>EcoLoop Pro - Smart Waste & Recycling Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-</head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
 
-    <!-- Auth Modal -->
-    <div id="auth-gate" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <style>
+        .snap-y-mandatory { scroll-snap-type: y mandatory; }
+        .snap-start { scroll-snap-align: start; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen pb-24">
+
+    <!-- 1. User Registration Modal -->
+    <div id="auth-gate" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl max-w-sm w-full shadow-2xl">
-            <h2 class="text-2xl font-bold text-emerald-400 mb-2">Welcome to EcoLoop</h2>
-            <p class="text-slate-400 text-xs mb-4">Enter details to access real-time waste trade & AI vision.</p>
+            <h2 class="text-2xl font-bold text-emerald-400 mb-1">Welcome to EcoLoop</h2>
+            <p class="text-slate-400 text-xs mb-4">Register to buy, sell, scan waste and connect with buyers.</p>
             <form onsubmit="handleLogin(event)" class="space-y-3">
                 <input type="text" id="u-name" placeholder="Full Name" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
                 <input type="tel" id="u-phone" placeholder="Phone Number" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
                 <input type="text" id="u-area" placeholder="City / Area" required class="w-full bg-slate-800 border border-slate-700 p-2.5 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
-                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-2.5 rounded-xl text-sm transition">Continue to App</button>
+                <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold p-2.5 rounded-xl text-sm transition">Get Started</button>
             </form>
         </div>
     </div>
 
-    <!-- Main Navigation -->
-    <nav class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-40">
+    <!-- Navigation Header -->
+    <nav class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-40">
         <div class="max-w-md mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold text-sm">♻️</div>
@@ -41,60 +46,101 @@
         </div>
     </nav>
 
-    <main class="max-w-md mx-auto p-4 space-y-4 pb-20">
-        <!-- Dashboard Overview -->
+    <!-- Main Mobile Container -->
+    <main class="max-w-md mx-auto p-4 space-y-5">
+
+        <!-- 2. Ad Banner (Monetization) -->
+        <div class="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/30 p-3 rounded-2xl flex items-center justify-between">
+            <div>
+                <span class="bg-amber-500/20 text-amber-400 text-[9px] font-bold px-1.5 py-0.5 rounded uppercase">Sponsored</span>
+                <p class="text-xs font-semibold text-slate-200 mt-0.5">EcoRecycle Importers: Best rates for Bulk PET Bottles!</p>
+            </div>
+            <a href="tel:0771234567" class="bg-amber-500 text-slate-950 text-xs font-bold px-3 py-1.5 rounded-xl flex-shrink-0">Call Now</a>
+        </div>
+
+        <!-- Price Overview -->
         <section class="grid grid-cols-2 gap-3">
             <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl">
-                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">PET Plastic</p>
-                <p id="price-pet" class="text-xl font-bold text-emerald-400 mt-1">Rs. 120/kg</p>
+                <p class="text-[10px] text-slate-400 uppercase font-semibold">PET Plastics</p>
+                <p class="text-xl font-bold text-emerald-400 mt-0.5">Rs. 120/kg</p>
             </div>
             <div class="bg-slate-900/80 border border-slate-800 p-3.5 rounded-2xl">
-                <p class="text-[10px] text-slate-400 uppercase font-semibold tracking-wider">Cardboard</p>
-                <p id="price-cardboard" class="text-xl font-bold text-emerald-400 mt-1">Rs. 45/kg</p>
+                <p class="text-[10px] text-slate-400 uppercase font-semibold">Cardboard/Paper</p>
+                <p class="text-xl font-bold text-emerald-400 mt-0.5">Rs. 45/kg</p>
             </div>
         </section>
 
-        <!-- AI Waste Classifier -->
+        <!-- 3. Gemini AI Waste Scanner -->
         <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
             <div class="flex items-center justify-between">
-                <h3 class="font-bold text-sm text-slate-200">AI Scanner</h3>
-                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">MobileNet v2</span>
+                <h3 class="font-bold text-sm text-slate-200">Gemini AI Waste Scanner</h3>
+                <span class="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">AI Powered</span>
             </div>
-            <div class="relative bg-slate-950 rounded-xl overflow-hidden aspect-video border border-slate-800 flex items-center justify-center">
-                <video id="webcam" autoplay playsinline class="w-full h-full object-cover hidden"></video>
-                <div id="camera-placeholder" class="text-center p-4">
-                    <p class="text-xs text-slate-500">Scan material to classify automatically</p>
-                </div>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="startCamera()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-xs font-bold py-2.5 rounded-xl border border-slate-700 transition">Open Camera</button>
-                <button onclick="classifyImage()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold py-2.5 rounded-xl transition">Analyze Waste</button>
-            </div>
-            <div id="ai-result" class="text-xs text-slate-400 bg-slate-950 p-2.5 rounded-xl border border-slate-800 hidden"></div>
+            <p class="text-xs text-slate-400">Upload or capture an image to identify waste type & market price.</p>
+            <input type="file" id="ai-image-input" accept="image/*" class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-emerald-400 hover:file:bg-slate-700">
+            <button onclick="analyzeImageWithGemini()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-xs font-bold py-2.5 rounded-xl transition">Scan & Price Check</button>
+            <div id="ai-output" class="text-xs text-slate-300 bg-slate-950 p-3 rounded-xl border border-slate-800 hidden leading-relaxed"></div>
         </section>
 
-        <!-- Map Section -->
+        <!-- 4. TikTok Style Video Feed -->
         <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
-            <h3 class="font-bold text-sm text-slate-200">Collector Map</h3>
-            <div id="map" class="h-44 rounded-xl border border-slate-800"></div>
+            <h3 class="font-bold text-sm text-slate-200">Recycling Shorts (Swipe Up)</h3>
+            <div class="h-80 overflow-y-scroll snap-y-mandatory hide-scrollbar rounded-xl border border-slate-800 bg-slate-950">
+                
+                <!-- Video Item 1 -->
+                <div class="h-80 w-full snap-start relative flex items-center justify-center bg-slate-900">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Short 1" frameborder="0" allowfullscreen></iframe>
+                    <div class="absolute bottom-3 left-3 bg-slate-950/80 p-2 rounded-lg backdrop-blur text-[11px]">
+                        <p class="font-bold text-emerald-400">@EcoPlasticLK</p>
+                        <p class="text-slate-300">How we crush & process PET bottles ♻️</p>
+                    </div>
+                </div>
+
+                <!-- Video Item 2 -->
+                <div class="h-80 w-full snap-start relative flex items-center justify-center bg-slate-900">
+                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Short 2" frameborder="0" allowfullscreen></iframe>
+                    <div class="absolute bottom-3 left-3 bg-slate-950/80 p-2 rounded-lg backdrop-blur text-[11px]">
+                        <p class="font-bold text-emerald-400">@ColomboRecycle</p>
+                        <p class="text-slate-300">Paper recycling process explained 🔥</p>
+                    </div>
+                </div>
+
+            </div>
         </section>
 
-        <!-- Admin Control -->
+        <!-- 5. Live Collector Map -->
+        <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
+            <h3 class="font-bold text-sm text-slate-200">Collector & Hub Locations</h3>
+            <div id="map" class="h-48 rounded-xl border border-slate-800 z-10"></div>
+        </section>
+
+        <!-- 6. Government Laws & Rules -->
+        <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <h3 class="font-bold text-sm text-amber-400">Government Regulations & Rules</h3>
+            <ul class="text-xs text-slate-400 space-y-1.5 list-disc pl-4">
+                <li>Single-use plastics are banned under CEA Sri Lanka regulations.</li>
+                <li>Waste separation (Organic, Plastic, Glass, Paper) is mandatory.</li>
+                <li>Illegal dumping carries fines under local government laws.</li>
+            </ul>
+        </section>
+
+        <!-- 7. Hidden Admin Panel -->
         <section class="bg-slate-900/80 border border-slate-800 p-4 rounded-2xl space-y-3">
             <h3 class="font-bold text-sm text-slate-200">Admin Panel</h3>
             <div id="admin-lock" class="flex gap-2">
-                <input type="password" id="admin-key" placeholder="Admin Key" class="flex-1 bg-slate-800 border border-slate-700 p-2 rounded-xl text-xs">
+                <input type="password" id="admin-key" placeholder="Enter Admin Pass" class="flex-1 bg-slate-800 border border-slate-700 p-2 rounded-xl text-xs">
                 <button onclick="unlockAdmin()" class="bg-slate-800 hover:bg-slate-700 text-xs font-bold px-4 rounded-xl border border-slate-700">Unlock</button>
             </div>
             <div id="admin-dashboard" class="hidden space-y-3 pt-2 border-t border-slate-800">
-                <p class="text-xs font-semibold text-emerald-400">Registered Users (Live Database)</p>
+                <p class="text-xs font-semibold text-emerald-400">Live Database - Registered Users</p>
                 <div id="user-registry" class="max-h-40 overflow-y-auto space-y-1.5 text-xs"></div>
             </div>
         </section>
+
     </main>
 
     <script>
-        // Firebase Configuration
+        // Firebase Setup
         const firebaseConfig = {
             apiKey: "AIzaSyAoe0G3ozEBElszj1dtdY-yvtztYrjsCow",
             authDomain: "ecoloop-v-69658.firebaseapp.com",
@@ -102,7 +148,6 @@
             storageBucket: "ecoloop-v-69658.firebasestorage.app",
             messagingSenderId: "644855661630",
             appId: "1:644855661630:web:be06fc4089b07ac5c9bd6f",
-            measurementId: "G-6J2S23PENM",
             databaseURL: "https://ecoloop-v-69658-default-rtdb.asia-southeast1.firebasedatabase.app/"
         };
 
@@ -110,69 +155,88 @@
         const database = firebase.database();
 
         let activeUser = null;
-        let model = null;
         const ADMIN_PASS = "mss@76";
-
-        // Handle User Login & Firebase Persistence
+        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // <-- Add your Gemini API Key here   const GEMINI_API_KEY = "ඔබ ලබාගත් API Key එක මෙතැනට දෙන්න";
+        // Handle Registration
         function handleLogin(e) {
             e.preventDefault();
             const name = document.getElementById('u-name').value;
             const phone = document.getElementById('u-phone').value;
             const area = document.getElementById('u-area').value;
 
-            activeUser = { name, phone, area, joinedAt: new Date().toLocaleString() };
+            activeUser = { name, phone, area, time: new Date().toLocaleString() };
             
-            // Save user to Cloud Database
+            // Save to Firebase
             database.ref('users/' + phone.replace(/[^0-9]/g, '')).set(activeUser);
 
             document.getElementById('auth-gate').classList.add('hidden');
             document.getElementById('user-badge').innerText = activeUser.name;
         }
 
-        // Camera & AI Classifier Setup
-        async function startCamera() {
-            const video = document.getElementById('webcam');
-            const placeholder = document.getElementById('camera-placeholder');
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                video.srcObject = stream;
-                video.classList.remove('hidden');
-                placeholder.classList.add('hidden');
-                if(!model) model = await mobilenet.load();
-            } catch(err) {
-                alert("Camera access denied or unavailable.");
-            }
-        }
+        // Gemini AI Analysis
+        async function analyzeImageWithGemini() {
+            const input = document.getElementById('ai-image-input');
+            const output = document.getElementById('ai-output');
 
-        async function classifyImage() {
-            const video = document.getElementById('webcam');
-            const resultDiv = document.getElementById('ai-result');
-            if(!model || video.classList.contains('hidden')) {
-                alert("Please open the camera first!");
+            if (!input.files || !input.files[0]) {
+                alert("Please select an image first!");
                 return;
             }
-            resultDiv.classList.remove('hidden');
-            resultDiv.innerText = "Analyzing material...";
-            const predictions = await model.classify(video);
-            if(predictions.length > 0) {
-                resultDiv.innerHTML = `<strong>Detected:</strong> ${predictions[0].className}<br><strong>Confidence:</strong> ${(predictions[0].probability * 100).toFixed(1)}%`;
-            }
+
+            output.classList.remove('hidden');
+            output.innerText = "Analyzing image via Gemini AI...";
+
+            const file = input.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = async () => {
+                const base64Data = reader.result.split(',')[1];
+                
+                const prompt = "Identify the type of waste/recyclable material in this image. Provide: 1. Waste Category 2. Estimated market value per KG in Sri Lanka (LKR) 3. Recycling instructions.";
+
+                try {
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [
+                                    { text: prompt },
+                                    { inline_data: { mime_type: file.type, data: base64Data } }
+                                ]
+                            }]
+                        })
+                    });
+
+                    const data = await response.json();
+                    if(data.candidates && data.candidates[0]) {
+                        output.innerText = data.candidates[0].content.parts[0].text;
+                    } else {
+                        output.innerText = "Could not analyze image. Check API key.";
+                    }
+                } catch(err) {
+                    output.innerText = "Error connecting to Gemini AI.";
+                }
+            };
+
+            reader.readAsDataURL(file);
         }
 
-        // Map Initialization
+        // Map setup
         window.addEventListener('load', () => {
             const map = L.map('map').setView([6.9271, 79.8612], 11);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            L.marker([6.9271, 79.8612]).addTo(map).bindPopup('Central Recycling Hub').openPopup();
+            L.marker([6.9271, 79.8612]).addTo(map).bindPopup('Central Waste Collector - Colombo').openPopup();
+            L.marker([6.9000, 79.8500]).addTo(map).bindPopup('EcoRecycle Plastic Buyer');
         });
 
-        // Admin Dashboard Integration
+        // Unlock Admin Dashboard
         function unlockAdmin() {
             if(document.getElementById('admin-key').value === ADMIN_PASS) {
                 document.getElementById('admin-lock').classList.add('hidden');
                 document.getElementById('admin-dashboard').classList.remove('hidden');
 
-                // Real-time synchronization with Firebase
+                // Read live user data from Realtime Database
                 database.ref('users').on('value', (snapshot) => {
                     const users = snapshot.val();
                     let html = '';
@@ -191,7 +255,7 @@
                     document.getElementById('user-registry').innerHTML = html;
                 });
             } else {
-                alert("Invalid Password!");
+                alert("Invalid Admin Password!");
             }
         }
     </script>
